@@ -1,0 +1,16 @@
+<input type="text" name="" id="todo-input" placeholder="Todo giriniz">
+<button id="add-button">Todo'yu Ekle</button>
+<ul id="todo-list">
+</ul>
+<script>
+    const button = document.getElementById("add-button");
+    button.addEventListener("click", () => {
+        const inputText = document.getElementById("todo-input").value;
+        if (!inputText || inputText.trim()=="")
+            return;
+
+        const listElement = document.createElement("li");
+        listElement.innerHTML = inputText;
+        document.getElementById("todo-list").appendChild(listElement);
+    })
+</script>
