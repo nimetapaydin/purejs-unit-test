@@ -13,28 +13,42 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 describe("Tüm testler", () => {
     let app
     let document
+    let input
+    let button
+
+    function addTodo(text) {
+        input.value = text;
+        button.click();
+    }
+
+    function getTodos() {
+        const liste = document.getElementById("todo-list");
+
+        var listedizisi  = []; 
+        for (let listItem of liste.children) {
+           listedizisi.push(listItem.innerHTML);
+        }
+        return listedizisi;
+    }
 
     beforeEach(() => {
         app = new JSDOM(html, { runScripts: 'dangerously' })
         document = app.window.document;
+        input = document.getElementById("todo-input");
+        button = document.getElementById('add-button');
     })
 
     test("todo butonu var olmalıdır", () => {    
-        const element = document.getElementById('add-button');
-        expect(element).not.toBeNull()
+        expect(button).not.toBeNull()
     });
     
     test("todo inputu var olmalıdır", () => {
-        const input = document.getElementById("todo-input");
         expect(input).not.toBeNull();
-        expect(input.getAttribute('placeholder')).toBe("Todo giriniz");
+        expect(input.getAttribute('placeholder')).toEqual("Todo giriniz");
     })
 
     test("todo eklenice listede göreyim", async() => {
-        const input = document.getElementById("todo-input");
-        const button = document.getElementById('add-button');
-        input.value = "Yeni Todo";
-        button.click();
+        addTodo("Yeni Todo");
 
         const liste = document.getElementById("todo-list").innerHTML;
 
@@ -42,26 +56,35 @@ describe("Tüm testler", () => {
     })
 
     test("isim boş olduğunda butona tıklarsam boş eleman eklemesin", () => {
-        const input = document.getElementById("todo-input");
-        const button = document.getElementById('add-button');
-        input.value = "";
-        button.click();
+        addTodo("");
 
         const liste = document.getElementById("todo-list");
         for (let listItem of liste.children) {
-            expect(listItem.innerHTML).not.toBe("");
+            expect(listItem.innerHTML).not.toEqual("");
         }
     })
 
-    test("isim sadece boşluk içerisrse eklememelidir", () => {
-        const input = document.getElementById("todo-input");
-        const button = document.getElementById('add-button');
-        input.value = "  ";
-        button.click();
+    test("isim sadece boşluk içerirse eklememelidir", () => {
+        addTodo("  ");
 
         const liste = document.getElementById("todo-list");
         for (let listItem of liste.children) {
-            expect(listItem.innerHTML.trim()).not.toBe("");
+            expect(listItem.innerHTML.trim()).not.toEqual("");
         }
     })
-})
+
+    test("todo eklendiğinde input temizlenmelidir", () =>{
+        addTodo("Yeni Todo");
+
+        expect(input.value).toEqual("");
+    })
+
+    test("aynı todo tekrar eklenmemeli", () => {
+        addTodo("Yeni Todo");
+        addTodo("Yeni Todo");
+
+        const todos = getTodos();
+        expect(todos.length).toEqual(1)
+        expect(todos).toEqual(["Yeni Todo"]);
+    })
+})  

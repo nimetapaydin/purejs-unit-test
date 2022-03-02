@@ -4,13 +4,28 @@
 </ul>
 <script>
     const button = document.getElementById("add-button");
+    const input = document.getElementById("todo-input");
+    const list = document.getElementById("todo-list");
     button.addEventListener("click", () => {
-        const inputText = document.getElementById("todo-input").value;
-        if (!inputText || inputText.trim()=="")
+        const todo = input.value;
+        if (!todo || todo.trim()=="")
             return;
 
+        // eğer aynı elemanı bulursa geri dönsün
+        for (let listItem of list.children) {
+            if (listItem.innerHTML === todo)
+                return;
+        }
+
+        input.value = "";
+
         const listElement = document.createElement("li");
-        listElement.innerHTML = inputText;
-        document.getElementById("todo-list").appendChild(listElement);
+        listElement.innerHTML = todo;
+        list.appendChild(listElement);
     })
+
+    // break -> bulunduğu göngüyü kırar
+    // return -> fonksiyonun işlevini döndürür ve altında bulunan hiçbir kodu çalıştırmaz
+
+
 </script>
